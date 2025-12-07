@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手作りカゴと横浜の花 - 3Dギャラリー</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+            background-image: url("img/jess-bailey.jpg");
+            background-size: cover;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #333;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+
+        .carousel-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 2000px;
+            padding-top: 120px;
+            position: relative;
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .carousel-item {
+            position: absolute;
+            width: 400px;
+            height: 500px;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .carousel-item .card {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .carousel-item .card img {
+            width: 100%;
+            height: 70%;
+            object-fit: cover;
+        }
+
+        .carousel-item .card .info {
+            padding: 1.5rem;
+            background: white;
+            height: 30%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .carousel-item .card .info h3 {
+            font-size: 1.3rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .carousel-item .card .info p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .carousel-item .card .date {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .carousel-item .card .delete-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255, 59, 48, 0.9);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .carousel-item .card .delete-btn:hover {
+            background: rgba(255, 59, 48, 1);
+            transform: scale(1.1);
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2rem;
+            z-index: 100;
+            margin-left: -80px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #667eea;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-btn:hover {
+            background: white;
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .add-photo-btn {
+            position: fixed;
+            bottom: 3rem;
+            right: 2rem;
+            z-index: 1001;
+            background: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #667eea;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .add-photo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .progress {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .empty-message {
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            .carousel-container {
+                padding-top: 100px;
+                height: 80vh;
+            }
+
+            .carousel {
+                height: 50vh;
+            }
+
+            .carousel-item {
+                width: 280px;
+                height: 380px;
+            }
+
+            .carousel-item .card .info h3 {
+                font-size: 1.1rem;
+            }
+
+            .carousel-item .card .info p {
+                font-size: 0.85rem;
+            }
+
+            .carousel-item .card .date {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .carousel-item .card .delete-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+
+            .add-photo-btn {
+                bottom: 2rem;
+                right: 1rem;
+                padding: 0.7rem 1.2rem;
+                font-size: 0.85rem;
+            }
+
+            .controls {
+                bottom: 2rem;
+                gap: 1.5rem;
+            }
+
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .progress {
+                font-size: 1rem;
+                margin-top: 1rem;
+            }
+
+            .modal-content {
+                padding: 2rem 1.5rem;
+                width: 95%;
+            }
+
+            .modal-content h2 {
+                font-size: 1.4rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.2rem;
+            }
+
+            .form-group label {
+                font-size: 0.9rem;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 0.7rem;
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel-item {
+                width: 250px;
+                height: 340px;
+            }
+
+            .carousel {
+                height: 45vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>枚方の女子大生</h1>
+        <div class="subtitle">コートで輝く〜明日香ちゃんのテニスジャーニー</div>
+    </div>
+
+    <button class="add-photo-btn" onclick="openModal()">📷 写真を追加</button>
+
+    <div class="carousel-container">
+        <div class="carousel" id="carousel">
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="rotateCarousel(-1)">❮</button>
+        <button class="control-btn" onclick="rotateCarousel(1)">❯</button>
+    </div>
+
+    <div class="progress" id="progress">0 / 0</div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2>新しい写真を追加</h2>
+            <form id="photoForm">
+                <div class="form-group">
+                    <label for="photoInput">写真を選択</label>
+                    <input type="file" id="photoInput" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="titleInput">タイトル</label>
+                    <input type="text" id="titleInput" placeholder="作品のタイトル" required>
+                </div>
+                <div class="form-group">
+                    <label for="descInput">説明（任意）</label>
+                    <textarea id="descInput" placeholder="作品の説明"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="dateInput">日付</label>
+                    <input type="date" id="dateInput" required>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">追加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let photos = [];
+        let currentIndex = 0;
+
+        // localStorageからデータを読み込む
+        function loadPhotos() {
+            const saved = localStorage.getItem('mieko-3d-photos');
+            if (saved) {
+                try {
+                    photos = JSON.parse(saved);
+                    console.log('写真を読み込みました:', photos.length);
+                } catch (error) {
+                    console.error('読み込みエラー:', error);
+                    photos = [];
+                }
+            }
+
+            // 写真がない場合はデフォルト写真を追加
+            if (photos.length === 0) {
+                photos = [{
+                    id: Date.now(),
+                    title: '最初の作品',
+                    description: '手作りカゴと季節の花',
+                    date: '2024年12月',
+                    image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800'
+                }];
+                savePhotos();
+            }
+
+            initCarousel();
+        }
+
+        // localStorageにデータを保存する
+        function savePhotos() {
+            try {
+                localStorage.setItem('mieko-3d-photos', JSON.stringify(photos));
+                console.log('写真を保存しました:', photos.length);
+            } catch (error) {
+                console.error('保存エラー:', error);
+                alert('保存に失敗しました。ストレージの容量を確認してください。');
+            }
+        }
+
+        // 写真を削除
+        function deletePhoto(id) {
+            if (confirm('この写真を削除しますか?')) {
+                photos = photos.filter(p => p.id !== id);
+                savePhotos();
+                if (photos.length === 0) {
+                    currentIndex = 0;
+                } else if (currentIndex >= photos.length) {
+                    currentIndex = photos.length - 1;
+                }
+                initCarousel();
+            }
+        }
+
+        function initCarousel() {
+            const carousel = document.getElementById('carousel');
+            carousel.innerHTML = '';
+            
+            if (photos.length === 0) {
+                carousel.innerHTML = '<div class="empty-message">写真を追加してください</div>';
+                document.getElementById('progress').textContent = '0 / 0';
+                return;
+            }
+
+            photos.forEach((photo, index) => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.innerHTML = `
+                    <div class="card">
+                        <button class="delete-btn" onclick="deletePhoto(${photo.id})">×</button>
+                        <div class="date">${photo.date}</div>
+                        <img src="${photo.image}" alt="${photo.title}" onerror="this.src='https://via.placeholder.com/400x300?text=画像エラー'">
+                        <div class="info">
+                            <h3>${photo.title}</h3>
+                            <p>${photo.description}</p>
+                        </div>
+                    </div>
+                `;
+                carousel.appendChild(item);
+            });
+
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const items = document.querySelectorAll('.carousel-item');
+            if (items.length === 0) return;
+
+            const angleStep = 360 / items.length;
+            const radius = 600;
+            
+            items.forEach((item, index) => {
+                const angle = ((index - currentIndex) * angleStep) * Math.PI / 180;
+                const x = Math.sin(angle) * radius;
+                const z = Math.cos(angle) * radius;
+                const scale = (z + radius) / (radius * 2);
+                const opacity = scale * 0.8 + 0.2;
+                
+                item.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, ${z}px) scale(${scale})`;
+                item.style.opacity = opacity;
+                item.style.zIndex = Math.round(scale * 100);
+            });
+
+            document.getElementById('progress').textContent = `${currentIndex + 1} / ${photos.length}`;
+        }
+
+        function rotateCarousel(direction) {
+            if (photos.length === 0) return;
+            currentIndex = (currentIndex + direction + photos.length) % photos.length;
+            updateCarousel();
+        }
+
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+            document.getElementById('dateInput').valueAsDate = new Date();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.getElementById('photoForm').reset();
+        }
+
+        document.getElementById('photoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('photoInput');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                // ファイルサイズチェック（5MB以下）
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('ファイルサイズが大きすぎます。5MB以下の画像を選択してください。');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newPhoto = {
+                        id: Date.now(),
+                        title: document.getElementById('titleInput').value,
+                        description: document.getElementById('descInput').value || '手作りカゴと季節の花',
+                        date: new Date(document.getElementById('dateInput').value).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' }),
+                        image: e.target.result
+                    };
+                    
+                    photos.push(newPhoto);
+                    savePhotos();
+                    initCarousel();
+                    closeModal();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // キーボード操作
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') rotateCarousel(-1);
+            if (e.key === 'ArrowRight') rotateCarousel(1);
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // スワイプ操作（モバイル対応）
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) rotateCarousel(1);
+            if (touchEndX - touchStartX > 50) rotateCarousel(-1);
+        });
+
+        // ページ読み込み時に写真を読み込む
+        window.addEventListener('load', loadPhotos);
+    </script>
+</body>
+</html>
