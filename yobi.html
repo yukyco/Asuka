@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>コートで輝く〜明日香のテニスジャーニー♪</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+<body>
+    <header>
+        <h1>コートで輝く〜明日香のテニスジャーニー♪</h1>
+        <p class="subtitle">Asuka Hamabe</p>
+    </header>
+    
+    <div class="slideshow-section">
+        <div class="slideshow-container" id="slideshowContainer">
+            <div class="slide active">
+                <div class="slide-image">写真をアップロードしてください</div>
+                <div class="slide-caption">
+                    今日の写真
+                    <div class="slide-date">2025年12月</div>
+                </div>
+            </div>
+            
+            <a class="prev" onclick="changeSlide(-1)">❮</a>
+            <a class="next" onclick="changeSlide(1)">❯</a>
+        </div>
+        
+        <div class="dots-container" id="dotsContainer">
+            <span class="dot active" onclick="currentSlide(0)"></span>
+        </div>
+    </div>
+    
+    <div class="upload-section">
+        <h2>新しい写真を追加</h2>
+        <div class="form-group">
+            <label for="photoUpload">写真を選択</label>
+            <input type="file" id="photoUpload" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label for="photoCaption">説明文（任意）</label>
+            <input type="text" id="photoCaption" placeholder="例:東京の大学との試合 ">
+            <!--<textarea id="photoCaption" rows="5" placeholder="例:東京の大学との試合"></textarea>-->
+        </div>
+        <div class="form-group">
+            <label for="photoDate">日付</label>
+            <input type="date" id="photoDate">
+        </div>
+        <button onclick="addPhoto()">写真を追加</button>
+        <button class="clear-all-btn" onclick="clearAllPhotos()">全ての写真を削除</button>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 手作りカゴと花</p>
+    </footer>
+    
+    <script src="script.js"></script>
+    <!-- ソースについて：https://claude.ai/share/25bce668-2416-4223-b75e-61a495ca8c39 -->
+</body>
+</html>
