@@ -6,8 +6,8 @@
 
 :root {
 	font-size: 16px;
-	--color-text: #000;
-	--color-bg: #fff;
+	--color-text: #fff;
+	--color-bg: #000;
 	--color-link: #fff;
 	--color-link-hover: #907030;
 	--color-title: #907030;
@@ -22,8 +22,8 @@
 
 body {
 	margin: 0;
-	--color-text: #fff;
-	--color-bg: #000;
+	color: var(--color-text);
+	background-color: var(--color-bg);
 	font-family: "moret-variable", serif;
 	font-variation-settings: "ital" 0, "wght" 300;
 	-webkit-font-smoothing: antialiased;
