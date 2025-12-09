@@ -42,10 +42,10 @@
                     <label for="descInput">説明（任意）</label>
                     <textarea id="descInput" placeholder="作品の説明"></textarea>
                 </div>
-                <div class="form-group">
+                <!--<div class="form-group">
                     <label for="dateInput">日付</label>
                     <input type="date" id="dateInput" required>
-                </div>
+                </div>-->
                 <div class="btn-group">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
                     <button type="submit" class="btn btn-primary">追加</button>
@@ -75,10 +75,10 @@
             if (photos.length === 0) {
                 photos = [{
                     id: Date.now(),
-                    title: '最初の作品',
-                    description: '手作りカゴと季節の花',
+                    title: '12月10日',
+                    description: '大学にて',
                     date: '2024年12月',
-                    image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800'
+                    image: ''
                 }];
                 savePhotos();
             }
