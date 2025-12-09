@@ -322,6 +322,12 @@ body #cdawrap {
 	margin: 40vh 0;
 }
 
+footer {
+	padding-bottom: 50px; 
+	text-align: center;
+	font-size: 28px!important;
+}
+
 .grid {
 	display: grid;
 	place-items: center;
